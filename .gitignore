@@ -1,0 +1,15 @@
+# Ignoriraj Visual Studio privremene datoteke
+.vs/
+*.user
+*.suo
+
+# Ignoriraj bin i obj direktorije
+bin/
+obj/
+
+# Ignoriraj build output
+*.dll
+*.exe
+
+# Ignoriraj user-specifične postavke
+.vscode/

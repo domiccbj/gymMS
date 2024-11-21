@@ -1,0 +1,10 @@
+﻿@using GymMembershipManagement
+@using GymMembershipManagement.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@using System.Globalization
+@{
+    var cultureInfo = new CultureInfo("de-DE");
+    CultureInfo.CurrentCulture = cultureInfo;
+    CultureInfo.CurrentUICulture = cultureInfo;
+}

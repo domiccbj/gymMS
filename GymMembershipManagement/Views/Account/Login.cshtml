@@ -1,0 +1,63 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urban Gym - Prijava</title>
+
+    @* <link rel="stylesheet" href="~/css/all.min.css"> *@
+    <link rel="stylesheet" href="~/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/login.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="~/Images/gym.ico" />
+
+  
+</head>
+
+<body>
+    <!-- Div za particles.js -->
+    <div id="particles-js"></div>
+
+    <!-- Login dijalog -->
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh; position: relative;">
+        <div class="login-card text-center">
+            <img src="~/Images/UrbanGymFull.jpg" alt="Urban Gym Logo" class="img-fluid" />
+            <h3>Dobrodošli u Urban Gym!</h3>
+            <form method="post" asp-action="Login" asp-controller="Account">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Korisničko ime</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Unesite korisničko ime" required />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Lozinka</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Unesite lozinku" required />
+                </div>
+                <button type="submit" class="custom-button">
+                    Prijavi se
+                    <i class="fa-solid fa-dumbbell"></i>
+                </button>
+
+
+
+            </form>
+            @if (ViewBag.ErrorMessage != null)
+            {
+                <div class="alert alert-danger text-center mt-3">
+                    @ViewBag.ErrorMessage
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="~/js/particles.min.js"></script>
+    <script src="~/js/login.js"></script>
+    
+
+</body>
+
+</html>

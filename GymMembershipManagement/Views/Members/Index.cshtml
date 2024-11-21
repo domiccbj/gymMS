@@ -1,0 +1,422 @@
+﻿@model IEnumerable<GymMembershipManagement.DataAccess.Models.Member>
+
+@{
+    ViewData["Title"] = "Upravljanje članovima";
+}
+
+<div class="container-fluid mt-4">
+    <h3 class="text-primary text-center">Upravljanje članovima - Urban GYM</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5>Popis članova</h5>
+        <button class="btn btn-primary" id="addMemberButton">
+            <i class="fas fa-user-plus"></i> Dodaj člana
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped w-100" id="membersTable">
+            <thead>
+                <tr>
+                    
+                    <th>Ime i prezime</th>
+                    <th>Slika</th>
+                    <th>Telefon</th>
+                    <th>Email adresa</th>
+                    <th>Adresa</th>
+                    <th>Spol</th>
+                    <th>Opis / prošlost bolesti</th>
+                    <th>Tip članarine</th>
+                    <th>Datum rođenja</th>
+                    <th>Početak treninga</th>
+                    <th>Akcije</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        
+                        <td>@member.Fullname</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(member.Picture))
+                            {
+                                <img src="@member.Picture" alt="Slika člana" style="width: 50px; height: 50px; cursor: pointer;"
+                                     class="member-image" data-bs-toggle="modal" data-bs-target="#imageModal" data-image-url="@member.Picture" />
+                            }
+                            else
+                            {
+                                <img src="/Images/no-image.jpg" alt="Nema slike" style="width: 50px; height: 50px; cursor: not-allowed;" />
+                            }
+                        </td>
+
+                        <td>@member.Phone</td>
+                        <td>@member.EmailAddress</td>
+                        <td>@member.Address</td>
+                        <td>@member.Sex</td>
+                        <td>@member.Description</td>
+                        <td>@member.Type</td>
+                        <td>@member.Birthdate?.ToString("dd.MM.yyyy")</td>
+                        <td>@member.StartDate?.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            <div class="d-flex justify-content-between action-wrapper">
+                                <button class="btn btn-warning btn-sm rounded-circle actionButton editButton" data-id="@member.Id" title="Uredi člana">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm rounded-circle actionButton deleteButton" data-id="@member.Id" title="Obriši člana">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal za prikaz slike -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Slika člana" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#membersTable').DataTable({
+                language: {
+                    search: "Pretraži:",
+                    lengthMenu: "Prikaži _MENU_ rezultata po stranici",
+                    info: "Prikazano _START_ do _END_ od _TOTAL_ rezultata",
+                    paginate: {
+                        previous: "Nazad",
+                        next: "Naprijed"
+                    }
+                },
+                columnDefs: [
+                    { orderable: false, targets: [1, 10] } 
+                ]
+            });
+
+
+            // Klik na sliku otvara modal i prikazuje sliku u punoj veličini
+            $(document).on('click', '.member-image', function () {
+                const imageUrl = $(this).data('image-url');
+                $('#modalImage').attr('src', imageUrl);
+            });
+
+            // Dodaj ESC zatvaranje ako već nije postavljeno u Bootstrap
+            $(document).on('keyup', function (e) {
+                if (e.key === "Escape") {
+                    $('#imageModal').modal('hide');
+                }
+            });
+
+        });
+
+
+
+        // Dodaj člana
+        $('#addMemberButton').on('click', function () {
+            Swal.fire({
+                title: 'Dodaj člana',
+                html: `
+                    <form id="addMemberForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="fullname" class="form-label">Ime i prezime <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control" id="fullname" required />
+                        </div>
+                         <div class="mb-3">
+                            <label for="phone" class="form-label">Telefon <span style="color: red;">*</span></label>
+                            <input type="text" class="form-control" id="phone" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Adresa</label>
+                            <input type="text" class="form-control" id="address" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="sex" class="form-label">Spol</label>
+                            <select class="form-select" id="sex">
+                                <option value="Muški">Muški</option>
+                                <option value="Ženski">Ženski</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Opis</label>
+                            <textarea class="form-control" id="description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Tip članarine <span style="color: red;">*</span></label>
+                            <select class="form-select" id="type" required>
+                                <option value="" disabled selected>Odaberite...</option>
+                                <option value="Mjesečna">Mjesečna - 30€</option>
+                                <option value="Dvomjesečna">Dvomjesečna - 55€</option>
+                                <option value="Polugodišnja">Polugodišnja - 180€</option>
+                                <option value="Godišnja">Godišnja - 300€</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="birthdate" class="form-label">Datum rođenja <span style="color: red;">*</span></label>
+                            <input type="date" class="form-control" id="birthdate" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Početak treninga <span style="color: red;">*</span></label>
+                            <input type="date" class="form-control" id="startDate" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="picture" class="form-label">Slika</label>
+                            <input type="file" class="form-control" id="picture" accept="image/*" />
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Dodaj',
+                cancelButtonText: 'Odustani',
+                preConfirm: () => {
+                    const fullname = $('#fullname').val().trim();
+                    const type = $('#type').val();
+                    const birthdate = $('#birthdate').val();
+                    const startDate = $('#startDate').val();
+
+                    // Provjera obaveznih polja
+                    if (!fullname || !phone || !type || !birthdate || !startDate) {
+                        Swal.showValidationMessage('Molimo popunite sva obavezna polja!');
+                        return false;
+                    }
+
+                    const data = new FormData();
+                    data.append('fullname', fullname);
+                    data.append('phone', $('#phone').val());
+                    data.append('EmailAddress', $('#email').val());
+                    data.append('address', $('#address').val());
+                    data.append('sex', $('#sex').val());
+                    data.append('description', $('#description').val());
+                    data.append('type', type);
+                    data.append('birthdate', birthdate);
+                    data.append('startDate', startDate);
+
+                    const fileInput = $('#picture')[0].files[0];
+                    if (fileInput) {
+                        data.append('picture', fileInput);
+                    }
+
+                    return data;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Members/Create',
+                        method: 'POST',
+                        data: result.value,
+                        processData: false,
+                        contentType: false,
+                        success: () => {
+                            Swal.fire('Uspješno!', 'Član je dodan.', 'success').then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: () => {
+                            Swal.fire('Greška!', 'Došlo je do greške pri dodavanju člana.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+
+                 // Editiraj člana
+        $('.editButton').on('click', function () {
+            const id = $(this).data('id');
+            $.ajax({
+                url: `/Members/Edit/${id}`,
+                method: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        const member = response.data;
+
+                        // Provjera da li je članarina aktivna
+                        const today = new Date();
+                        const startDate = new Date(member.startDate);
+                        const duration = getMembershipDuration(member.type); // Funkcija koja vraća trajanje članarine
+                        const isActive = startDate && (new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000) >= today);
+
+                        Swal.fire({
+                            title: 'Uredi člana',
+                            html: `
+                                <form id="editMemberForm" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <label for="fullname" class="form-label">Ime i prezime <span style="color: red;">*</span></label>
+                                        <input type="text" class="form-control" id="fullname" value="${member.fullname || ''}" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phone" class="form-label">Telefon <span style="color: red;">*</span></label>
+                                        <input type="text" class="form-control" id="phone" value="${member.phone || ''}" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" value="${member.emailAddress || ''}" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Adresa</label>
+                                        <input type="text" class="form-control" id="address" value="${member.address || ''}" />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sex" class="form-label">Spol</label>
+                                        <select class="form-select" id="sex">
+                                            <option value="Muški" ${member.sex === 'Muški' ? 'selected' : ''}>Muški</option>
+                                            <option value="Ženski" ${member.sex === 'Ženski' ? 'selected' : ''}>Ženski</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Opis</label>
+                                        <textarea class="form-control" id="description">${member.description || ''}</textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="type" class="form-label">Tip članarine <span style="color: red;">*</span></label>
+                                        <select class="form-select" id="type" ${isActive ? 'disabled' : ''} required>
+                                            <option value="" disabled>Odaberite...</option>
+                                            <option value="Mjesečna" ${member.type === 'Mjesečna' ? 'selected' : ''}>Mjesečna</option>
+                                            <option value="Dvomjesečna" ${member.type === 'Dvomjesečna' ? 'selected' : ''}>Dvomjesečna</option>
+                                            <option value="Polugodišnja" ${member.type === 'Polugodišnja' ? 'selected' : ''}>Polugodišnja</option>
+                                            <option value="Godišnja" ${member.type === 'Godišnja' ? 'selected' : ''}>Godišnja</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="birthdate" class="form-label">Datum rođenja <span style="color: red;">*</span></label>
+                                        <input type="date" class="form-control" id="birthdate" value="${member.birthdate || ''}" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="startDate" class="form-label">Početak treninga <span style="color: red;">*</span></label>
+                                        <input type="date" class="form-control" id="startDate" value="${member.startDate || ''}" ${isActive ? 'disabled' : ''} required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="picture" class="form-label">Promijeni sliku</label>
+                                        <input type="file" class="form-control" id="picture" accept="image/*" />
+                                    </div>
+                                </form>
+                            `,
+                            showCancelButton: true,
+                            confirmButtonText: 'Spremi',
+                            cancelButtonText: 'Odustani',
+                            preConfirm: () => {
+                                const fullname = $('#fullname').val().trim();
+                                const phone = $('#phone').val().trim();
+                                const type = $('#type').val();
+                                const birthdate = $('#birthdate').val();
+                                const startDate = $('#startDate').val();
+
+                                // Validacija obaveznih polja
+                                if (!fullname || !phone || !type || !birthdate || !startDate) {
+                                    Swal.showValidationMessage('Molimo popunite sva obavezna polja!');
+                                    return false;
+                                }
+
+                                const data = new FormData();
+                                data.append('id', id);
+                                data.append('fullname', fullname);
+                                data.append('phone', phone);
+                                data.append('emailAddress', $('#email').val());
+                                data.append('address', $('#address').val());
+                                data.append('sex', $('#sex').val());
+                                data.append('description', $('#description').val());
+                                data.append('type', type);
+                                data.append('birthdate', birthdate);
+                                data.append('startDate', startDate);
+
+                                const fileInput = $('#picture')[0].files[0];
+                                if (fileInput) {
+                                    data.append('picture', fileInput);
+                                }
+
+                                return data;
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: '/Members/Edit',
+                                    method: 'POST',
+                                    data: result.value,
+                                    processData: false,
+                                    contentType: false,
+                                    success: () => {
+                                        Swal.fire('Uspješno!', 'Član je ažuriran.', 'success').then(() => {
+                                            location.reload();
+                                        });
+                                    },
+                                    error: () => {
+                                        Swal.fire('Greška!', 'Došlo je do greške pri ažuriranju člana.', 'error');
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        Swal.fire('Greška!', response.message, 'error');
+                    }
+                },
+                error: () => {
+                    Swal.fire('Greška!', 'Došlo je do greške pri dohvaćanju člana.', 'error');
+                }
+            });
+        });
+
+        // Funkcija za trajanje članarine
+        function getMembershipDuration(type) {
+            switch (type) {
+                case 'Mjesečna': return 30;
+                case 'Dvomjesečna': return 60;
+                case 'Polugodišnja': return 182;
+                case 'Godišnja': return 365;
+                default: return 0;
+            }
+        }
+
+
+
+        // Obriši člana
+        $('.deleteButton').on('click', function () {
+            const id = $(this).data('id');
+            Swal.fire({
+                title: 'Jeste li sigurni?',
+                text: 'Ova radnja je nepovratna!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Da, obriši',
+                cancelButtonText: 'Odustani'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/Members/Delete/${id}`,
+                        method: 'POST',
+                        success: function () {
+                            Swal.fire('Obrisano!', 'Član je uspješno obrisan.', 'success').then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function () {
+                            Swal.fire('Greška!', 'Došlo je do greške pri brisanju člana.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

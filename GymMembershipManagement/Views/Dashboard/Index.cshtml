@@ -1,0 +1,222 @@
+﻿@model GymMembershipManagement.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Nadzorna ploča";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Zarada mjesečno -->
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="text-uppercase">Zarada (mjesečno)</h6>
+                        <i class="fas fa-calendar fa-2x text-primary"></i>
+                    </div>
+                    <h5>@Model.MonthlyEarnings.ToString("C", new CultureInfo("de-DE"))</h5>
+                </div>
+            </div>
+        </div>
+        <!-- Zarada godišnje -->
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="text-uppercase">Zarada (godišnje)</h6>
+                        <i class="fas fa-dollar-sign fa-2x text-success"></i>
+                    </div>
+                    <h5>@Model.YearlyEarnings.ToString("C", new CultureInfo("de-DE"))</h5>
+                </div>
+            </div>
+        </div>
+        <!-- Aktivni članovi -->
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="text-uppercase">Aktivni članovi</h6>
+                        <i class="fas fa-users fa-2x text-warning"></i>
+                    </div>
+                    <h5>@Model.TotalActiveMembers</h5>
+                </div>
+            </div>
+        </div>
+        <!-- Ukupno članova -->
+        <div class="col-md-3">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="text-uppercase">Ukupno članova</h6>
+                        <i class="fas fa-user fa-2x text-info"></i>
+                    </div>
+                    <h5>@Model.TotalMembers</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grafovi -->
+    <div class="row mt-5">
+        <!-- Mjesečni pregled zarada -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="text-primary m-0">Mjesečni pregled zarade</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="monthlyEarningsChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Spol članova -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="text-primary m-0">Spol članova</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="genderPieChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <!-- Godišnji pregled zarada -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="text-primary m-0">Godišnji pregled zarade</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="annualEarningsChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Dobne skupine članova -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="text-primary m-0">Dobne skupine članova</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="ageGroupChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Novi grafovi -->
+    <div class="row mt-5">
+        <!-- Članarine po tipu -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="text-primary m-0">Članarine po tipu</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="membershipTypeChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <!-- Početak treninga po mjesecima -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h6 class="text-primary m-0">Početak treninga po mjesecima</h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="trainingStartChart" style="height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Graf za mjesečni pregled zarada
+        const monthlyEarningsChartData = @Html.Raw(Model.MonthlyEarningsChartJson);
+        const monthlyEarningsCtx = document.getElementById('monthlyEarningsChart').getContext('2d');
+        new Chart(monthlyEarningsCtx, {
+            type: 'line',
+            data: monthlyEarningsChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } },
+                scales: { x: { beginAtZero: true }, y: { beginAtZero: true } }
+            }
+        });
+
+        // Graf za spol članova
+        const genderPieChartData = @Html.Raw(Model.GenderPieChartJson);
+        const genderPieChartCtx = document.getElementById('genderPieChart').getContext('2d');
+        new Chart(genderPieChartCtx, {
+            type: 'doughnut',
+            data: genderPieChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } }
+            }
+        });
+
+        // Graf za godišnji pregled zarada
+        const annualEarningsChartData = @Html.Raw(Model.AnnualEarningsChartJson);
+        const annualEarningsCtx = document.getElementById('annualEarningsChart').getContext('2d');
+        new Chart(annualEarningsCtx, {
+            type: 'line',
+            data: annualEarningsChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } },
+                scales: { x: { beginAtZero: true }, y: { beginAtZero: true } }
+            }
+        });
+
+        // Graf za dobne skupine članova
+        const ageGroupChartData = @Html.Raw(Model.AgeGroupChartJson);
+        const ageGroupCtx = document.getElementById('ageGroupChart').getContext('2d');
+        new Chart(ageGroupCtx, {
+            type: 'pie',
+            data: ageGroupChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } }
+            }
+        });
+
+        // Novi graf za članarine po tipu
+        const membershipTypeChartData = @Html.Raw(Model.MembershipTypeChartJson);
+        const membershipTypeCtx = document.getElementById('membershipTypeChart').getContext('2d');
+        new Chart(membershipTypeCtx, {
+            type: 'bar',
+            data: membershipTypeChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } },
+                scales: { x: { beginAtZero: true }, y: { beginAtZero: true } }
+            }
+        });
+
+        // Novi graf za početak treninga po mjesecima
+        const trainingStartChartData = @Html.Raw(Model.StartDateByMonthChartJson);
+        const trainingStartCtx = document.getElementById('trainingStartChart').getContext('2d');
+        new Chart(trainingStartCtx, {
+            type: 'bar',
+            data: trainingStartChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } },
+                scales: { x: { beginAtZero: true }, y: { beginAtZero: true } }
+            }
+        });
+    </script>
+}

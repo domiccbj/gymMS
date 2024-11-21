@@ -1,0 +1,133 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Sprječava pomicanje stranice */
+    height: 100vh;
+    width: 100vw;
+}
+
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #0d1117; /* Tamna pozadina */
+    z-index: 1;
+}
+
+.login-card {
+    position: relative;
+    z-index: 2;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1); /* Polu-prozirna pozadina */
+    backdrop-filter: blur(5px); /* Zamagljenje */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+    .login-card img {
+        max-width: 100px;
+        margin-bottom: 20px;
+        animation: pulse 2s infinite;
+        clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); 
+        -webkit-clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    }
+
+
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.login-card h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #ffffff !important; 
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); 
+}
+
+.login-card .form-control {
+    height: 45px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.2); 
+    color: #ffffff; 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    border-radius: 15px; 
+    padding: 10px; 
+    transition: background-color 0.3s ease, border 0.3s ease; 
+}
+
+    .login-card .form-control:hover {
+        background: rgba(255, 255, 255, 0.3); 
+        border: 1px solid rgba(255, 255, 255, 0.5); 
+    }
+
+
+    .login-card .form-control:focus {
+        background: rgba(255, 255, 255, 0.4); 
+        border: 1px solid #ae1c22; 
+        box-shadow: 0px 0px 8px rgba(174, 28, 34, 0.8); 
+        outline: none; 
+    }
+
+.login-card button {
+    height: 45px;
+    font-size: 16px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.alert {
+    font-size: 14px;
+}
+
+.login-card .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7); 
+    opacity: 1; 
+}
+
+.custom-button {
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    padding: 15px 30px; 
+    border-radius: 15px; 
+    background-color: #ae1c22 !important; 
+    color: #fff; 
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+}
+
+    .custom-button img {
+        width: 20px; 
+        height: 20px; 
+    }
+
+    .custom-button:hover {
+        background-color: #8c181c !important; 
+        transform: scale(1.05); 
+    }
+
+    .custom-button:active {
+        transform: scale(0.95); 
+    }

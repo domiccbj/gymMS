@@ -1,0 +1,68 @@
+﻿@model List<GymMembershipManagement.DataAccess.Models.MemberReport>
+
+
+@{
+    ViewData["Title"] = "Izvješća";
+}
+
+<div class="container mt-5">
+    <h3 class="text-primary text-center">Izvješća o Uplatama - Urban GYM</h3>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered" id="reportsTable">
+            <thead>
+                <tr>
+                    <th>Ime i Prezime</th>
+                    <th>Slika</th>
+                    <th>Telefon</th>
+                    <th>Adresa</th>
+                    <th>Članarina</th>
+                    <th>Ukupno Uplate (€)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model)
+                {
+                    <tr>
+                        <td>@report.Fullname</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(report.Picture))
+                            {
+                                <img src="@report.Picture" alt="Slika člana" style="width: 50px; height: 50px; cursor: pointer;"
+                                     class="member-image" data-bs-toggle="modal" data-bs-target="#imageModal" data-image-url="@report.Picture" />
+                            }
+                            else
+                            {
+                                <img src="/Images/no-image.jpg" alt="Nema slike" style="width: 50px; height: 50px; cursor: not-allowed;" />
+                            }
+                        </td>
+                        <td>@report.Phone</td>
+                        <td>@report.Address</td>
+                        <td>@report.Membership</td>
+                        <td>@report.TotalAmount.ToString("0")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#reportsTable').DataTable({
+                order: [[4, 'desc']], // Rangiranje prema 5. stupcu (Ukupno Uplate) od najveće prema najmanjoj
+                language: {
+                    search: "Pretraži:",
+                    lengthMenu: "Prikaži _MENU_ rezultata po stranici",
+                    info: "Prikazano _START_ do _END_ od _TOTAL_ rezultata",
+                    paginate: {
+                        previous: "Nazad",
+                        next: "Naprijed"
+                    }
+                }
+            });
+        });
+    </script>
+}

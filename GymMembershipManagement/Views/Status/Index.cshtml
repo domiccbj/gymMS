@@ -1,0 +1,219 @@
+﻿@model List<GymMembershipManagement.DataAccess.Models.MemberStatus>
+
+@{
+    ViewData["Title"] = "Status Članova";
+}
+
+<div class="container-fluid mt-5">
+    <h3 class="text-primary text-center">Status Članova - Urban GYM</h3>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped w-100" id="membersTable">
+            <thead>
+                <tr>
+                    <th>Ime i Prezime</th>
+                    <th>Slika</th>
+                    <th>Broj Mobitela</th>
+                    <th>Email</th>
+                    <th>Članarina</th>
+                    <th>Datum Početka</th>
+                    <th>Status</th>
+                    <th>Akcija</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var member in Model.OrderBy(m => m.RemainingDays))
+                {
+                    <tr>
+                        <td>@member.Fullname</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(member.Picture))
+                            {
+                                <img src="@member.Picture" alt="Slika člana" style="width: 50px; height: 50px; cursor: pointer;" class="member-image" data-bs-toggle="modal" data-bs-target="#imageModal" data-image-url="@member.Picture" />
+                            }
+                            else
+                            {
+                                <img src="/Images/no-image.jpg" alt="Nema slike" style="width: 50px; height: 50px; cursor: not-allowed;" />
+                            }
+                        </td>
+                        <td>@member.Phone</td>
+                        <td>@member.EmailAddress</td>
+                        <td>@member.MembershipType</td>
+                        <td>@member.StartDate?.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            @if (member.Status == "Expired")
+                            {
+                                <span class="badge bg-danger">Istekla članarina</span>
+                            }
+                            else if (member.RemainingDays <= 3)
+                            {
+                                <span class="badge bg-warning">Ističe za @member.RemainingDays dana</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Aktivno - Ističe za @member.RemainingDays dana</span>
+                            }
+                        </td>
+                        <td>
+                            @if (member.Status == "Expired")
+                            {
+                                <button class="btn btn-lightblue btn-sm rounded-circle actionButton extendButton"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#paymentModal"
+                                        data-id="@member.Id"
+                                        data-type="@member.MembershipType"
+                                        title="Produži članarinu">
+                                    <i class="fa-solid fa-rocket"></i>
+                                </button>
+
+                            }
+                            else
+                            {
+                                <span class="text-muted">Nema akcija</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal za prikaz slike -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Prikaz slike</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Slika člana" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal za produženje članarine -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel">Produži članarinu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zatvori"></button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm">
+                    <input type="hidden" id="memberId" />
+                    <div class="mb-3">
+                        <label for="newStartDate" class="form-label">Novi datum početka</label>
+                        <input type="date" class="form-control" id="newStartDate" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="newMembershipType" class="form-label">Tip članarine</label>
+                        <select class="form-select" id="newMembershipType" required>
+                            <option value="Mjesečna">Mjesečna</option>
+                            <option value="Dvomjesečna">Dvomjesečna</option>
+                            <option value="Polugodišnja">Polugodišnja</option>
+                            <option value="Godišnja">Godišnja</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Potvrdi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#membersTable').DataTable({
+                language: {
+                    search: "Pretraži:",
+                    lengthMenu: "Prikaži _MENU_ rezultata po stranici",
+                    info: "Prikazano _START_ do _END_ od _TOTAL_ rezultata",
+                    paginate: {
+                        previous: "Nazad",
+                        next: "Naprijed"
+                    }
+                    },
+            columnDefs: [
+                { orderable: false, targets: [1, 7] } 
+            ],
+            order: [[6, 'desc']], 
+            paging: true,
+            searching: true, 
+            info: true, 
+            lengthChange: true, 
+            pageLength: 10 
+        });
+
+            
+            $(document).on('click', '.member-image', function () {
+                const imageUrl = $(this).data('image-url');
+                $('#modalImage').attr('src', imageUrl);
+            });
+
+           
+            $('#paymentModal').on('show.bs.modal', function (event) {
+                const button = $(event.relatedTarget);
+                const memberId = button.data('id');
+                const membershipType = button.data('type');
+
+                const modal = $(this);
+                modal.find('#memberId').val(memberId);
+                modal.find('#newMembershipType').val(membershipType); 
+
+           
+                let amount = 0;
+                switch (membershipType) {
+                    case 'Mjesečna': amount = 30; break;
+                    case 'Dvomjesečna': amount = 55; break;
+                    case 'Polugodišnja': amount = 180; break;
+                    case 'Godišnja': amount = 300; break;
+                }
+                modal.find('#amount').val(amount);
+            });
+
+            // Obrada form-e za produženje članarine
+            $('#paymentForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const memberId = $('#memberId').val();
+                const newStartDate = $('#newStartDate').val();
+                const newMembershipType = $('#newMembershipType').val();
+
+                if (!newStartDate || !newMembershipType) {
+                    alert('Molimo unesite sve podatke!');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Status/ExtendMembership',
+                    method: 'POST',
+                    data: {
+                        memberId: memberId,
+                        newStartDate: newStartDate,
+                        newMembershipType: newMembershipType
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Članarina uspješno produžena!');
+                            $('#paymentModal').modal('hide');
+                            location.reload();
+                        } else {
+                            alert(response.message || 'Došlo je do greške!');
+                        }
+                    },
+                    error: function () {
+                        alert('Došlo je do greške pri produženju članarine!');
+                    }
+                });
+            });
+        });
+    </script>
+}

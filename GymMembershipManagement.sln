@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GymMembershipManagement", "GymMembershipManagement\GymMembershipManagement.csproj", "{323E6B3C-C669-4D1A-919E-C1DB3DDFDAAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GymMembershipManagement.DataAccess", "GymMembershipManagement.DataAccess\GymMembershipManagement.DataAccess.csproj", "{7F601200-BA69-4E81-8008-5BA59974D8E7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{323E6B3C-C669-4D1A-919E-C1DB3DDFDAAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{323E6B3C-C669-4D1A-919E-C1DB3DDFDAAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{323E6B3C-C669-4D1A-919E-C1DB3DDFDAAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{323E6B3C-C669-4D1A-919E-C1DB3DDFDAAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F601200-BA69-4E81-8008-5BA59974D8E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F601200-BA69-4E81-8008-5BA59974D8E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F601200-BA69-4E81-8008-5BA59974D8E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F601200-BA69-4E81-8008-5BA59974D8E7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74EE6E70-1505-4081-888F-4029485F2B61}
+	EndGlobalSection
+EndGlobal
